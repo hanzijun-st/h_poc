@@ -1,0 +1,105 @@
+server:
+  port: 8318
+logging:
+  config: classpath:log/logback-spring-dev.xml
+#通用数据源
+#数据源1
+spring:
+  data:
+    mongodb:
+      uri: mongodb://172.18.30.12:27017/yifangbao
+  #数据库信息
+  datasource:
+    bd:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.18.30.13:3309/qlm_ka?useUnicode=true&characterEncoding=utf8
+      username: root
+      password: qF2Z3cpMR6VVJBRt
+      type: com.alibaba.druid.pool.DruidDataSource
+      # 初始化大小，最小，最大
+      initialSize: 3
+      minIdle: 3
+      maxActive: 5
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      #         配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall
+      # 合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
+    gw:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://117.79.92.68:30709/qianlima?useUnicode=true&characterEncoding=gbk
+      username: allReaderH
+      password: 3ooU17twtngV
+      type: com.alibaba.druid.pool.DruidDataSource
+      # 初始化大小，最小，最大
+      initialSize: 3
+      minIdle: 3
+      maxActive: 5
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      #         配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall
+      # 合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
+    tencent:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://106.53.23.148:3309/t_data_service?useUnicode=true&characterEncoding=utf8
+      username: monitorReader
+      password: CU4RVb3bbyvL
+      type: com.alibaba.druid.pool.DruidDataSource
+      # 初始化大小，最小，最大
+      initialSize: 3
+      minIdle: 3
+      maxActive: 5
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      #         配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall
+      # 合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
+qlm:
+  data:
+    lasttimeFile: /usr/local/ka/producer/lasttime.txt
+    endtimeFile: /usr/local/ka/producer/endtime.txt
+    allsolr: http://10.29.80.153:8984/solr/qlm_qy_info
+    ictsolr: http://172.18.30.12:8984/solr/qianlima_ict_shard2_replica1
+zt:
+  api:
+    url: http://datafetcher.intra.qianlima.com/dc/bidding/specificalfields
+    saveContentIdUrl: http://datafetcher.intra.qianlima.com/dc/itc/receive_contentid_to_extract
+    singleFieldUrl: http://datafetcher.intra.qianlima.com/dc/bidding/field
+    fieldsUrl: http://datafetcher.intra.qianlima.com/dc/bidding/fields

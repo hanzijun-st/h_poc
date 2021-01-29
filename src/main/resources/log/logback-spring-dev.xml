@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration >
+    <!--控制台输出的格式设置 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 控制台输出的日志 的格式 -->
+        <encoder>
+            <pattern>
+                [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] %logger{96} [%line] - %msg%n
+            </pattern>
+            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+        </encoder>
+    </appender>
+    <appender name="error"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 日志日常打印文件 -->
+        <file>/usr/local/ka/logs/offline/error.log</file>
+        <!-- 配置日志所生成的目录以及生成文件名的规则 在logs/mylog-2017-06-31.0.log.zip -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/usr/local/ka/logs/offline/error-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <!-- 如果按天来回滚，则最大保存时间为365天，365天之前的都将被清理掉 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!--文件达到 最大200MB时会被压缩和切割 -->
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <!-- 文件输出的日志 的格式 -->
+        <encoder>
+            <pattern>
+                [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] %logger{96} [%line] - %msg%n
+            </pattern>
+            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+        </encoder>
+        <!-- Safely log to the same file from multiple JVMs. Degrades performance! -->
+        <prudent>false</prudent>
+    </appender>
+
+    <appender name="info"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 日志日常打印文件 -->
+        <file>/usr/local/ka/logs/offline/info.log</file>
+        <!-- 配置日志所生成的目录以及生成文件名的规则 在logs/mylog-2017-06-31.0.log.zip -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/usr/local/ka/logs/offline/info-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <!-- 如果按天来回滚，则最大保存时间为365天，365天之前的都将被清理掉 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!--文件达到 最大200MB时会被压缩和切割 -->
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <!-- 文件输出的日志 的格式 -->
+        <encoder>
+            <pattern>
+                [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] %logger{96} [%line] - %msg%n
+            </pattern>
+            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+        </encoder>
+        <!-- Safely log to the same file from multiple JVMs. Degrades performance! -->
+        <prudent>false</prudent>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+    <logger name="com.qianlima" level="INFO">
+        <appender-ref ref="error" />
+        <appender-ref ref="info" />
+    </logger>
+</configuration>
