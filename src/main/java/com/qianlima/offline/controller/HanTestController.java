@@ -105,4 +105,18 @@ public class HanTestController {
         testService.getZongHengDaPeng3(type,date);
         return "---getZongHengDaPeng3---";
     }
+    @ApiOperation("合肥航联文化传播有限公司")
+    @PostMapping("/getHeFeiHangLian")
+    public String getHeFeiHangLian(Integer type,String date) throws Exception{
+        testService.getHeFeiHangLian(type,date);
+        return "---getHeFeiHangLian---";
+    }
+
+    @ApiOperation("北京冠瑞科技有限公司")
+    @PostMapping("/getBeiJingGuanrui")
+    public String getBeiJingGuanrui(Integer type,String date) throws Exception{
+        testService.getBeiJingGuanrui(type,date);
+        return "---getBeiJingGuanrui---";
+    }
+
 }

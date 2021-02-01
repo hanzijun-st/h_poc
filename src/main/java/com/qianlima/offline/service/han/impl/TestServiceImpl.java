@@ -76,14 +76,12 @@ public class TestServiceImpl implements TestService{
         ExecutorService executorService1 = Executors.newFixedThreadPool(32);
         List<Future> futureList = new ArrayList<>();
         //contentid
-        List<Map<String, Object>> mapList = bdJdbcTemplate.queryForList("SELECT contentid FROM han_contentid");
-        Integer num = mapList.size();
+        List<Map<String, Object>> mapList = bdJdbcTemplate.queryForList("SELECT id,contentid FROM han_contentid");
         for (Map<String, Object> mapData : mapList) {
-            num --;
-            String syNum = num.toString();//剩余数据量
+            String syNum = mapData.get("id").toString();//剩余数据量
             futureList.add(executorService1.submit(() -> {
                 newBiaoDiWuService.handleForData(Long.valueOf(mapData.get("contentid").toString()));
-                log.info("新标的物方法--->:{}",mapData.get("contentid").toString()+"---剩余数量：{}",syNum);
+                log.info("新标的物方法--->:{}",syNum);
             }));
         }
         for (Future future1 : futureList) {
@@ -967,6 +965,231 @@ public class TestServiceImpl implements TestService{
                     arrayList.add(key+"&"+str2);
                 }
             }*/
+            //关键词c
+            for (String key :aa){
+                arrayList.add(key);
+            }
+            for (String str : arrayList) {
+                int total = 0;
+                for (NoticeMQ noticeMQ : list) {
+                    String keyword = noticeMQ.getKeyword();
+                    if (keyword.equals(str)) {
+                        total++;
+                    }
+                }
+                if (total == 0) {
+                    continue;
+                }
+                System.out.println(str + ": " + total);
+            }
+            System.out.println("全部数据量：" + listAll.size());
+            System.out.println("去重之后的数据量：" + list.size());
+
+
+            if (type.intValue() == 1){
+                if (list != null && list.size() > 0) {
+                    ExecutorService executorService = Executors.newFixedThreadPool(80);
+                    List<Future> futureList = new ArrayList<>();
+
+                    for (NoticeMQ content : list) {
+                        futureList.add(executorService.submit(() -> getDataFromZhongTaiAndSave(content)));
+                    }
+
+                    for (Future future : futureList) {
+                        try {
+                            future.get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    executorService.shutdown();
+
+                }
+            }
+            System.out.println("==========================================此程序运行结束========================================");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getHeFeiHangLian(Integer type, String date) {
+        ExecutorService executorService1 = Executors.newFixedThreadPool(32);//开启线程池
+        List<NoticeMQ> list = new ArrayList<>();//去重后的数据
+        List<NoticeMQ> listAll = new ArrayList<>();//得到所以数据
+        HashMap<String, String> dataMap = new HashMap<>();
+        List<Future> futureList1 = new ArrayList<>();
+
+        try {
+            //关键词a
+            List<String> aa = LogUtils.readRule("keyWordsA");
+            //关键词b
+            List<String> bb = LogUtils.readRule("keyWordsB");
+
+            //读取配置文件中的黑词
+            List<String> blacks = LogUtils.readRule("blockKeys");
+
+            //全文检索关键词a AND 关键词b
+            for (String str : aa) {
+                for (String str2 : bb) {
+                    futureList1.add(executorService1.submit(() -> {
+                        List<NoticeMQ> mqEntities = contentSolr.companyResultsBaoXian("yyyymmdd:["+date+"] AND (progid:[0 TO 3] OR progid:5) AND catid:[* TO 100] AND title:\"" + str + "\"  AND allcontent:\"" + str2 + "\"", str+"&"+str2, 2);
+                        log.info(str.trim() + "————" + mqEntities.size());
+                        if (!mqEntities.isEmpty()) {
+                            for (NoticeMQ data : mqEntities) {
+                                if (data.getTitle() != null) {
+                                    boolean flag = true;
+                                    if (flag){
+                                        listAll.add(data);
+                                        data.setKeyword(str+"&"+str2);
+                                        if (!dataMap.containsKey(data.getContentid().toString())) {
+                                            list.add(data);
+                                            dataMap.put(data.getContentid().toString(), "0");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }));
+                }
+            }
+
+            for (Future future1 : futureList1) {
+                try {
+                    future1.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    executorService1.shutdown();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            executorService1.shutdown();
+
+
+            log.info("全部数据量：" + listAll.size());
+            log.info("去重之后的数据量：" + list.size());
+            log.info("==========================");
+
+
+            ArrayList<String> arrayList = new ArrayList<>();
+
+            //关键词a 和 关键词b
+            for (String key : aa) {
+                for (String str2 : bb) {
+                    arrayList.add(key+"&"+str2);
+                }
+            }
+
+
+            for (String str : arrayList) {
+                int total = 0;
+                for (NoticeMQ noticeMQ : list) {
+                    String keyword = noticeMQ.getKeyword();
+                    if (keyword.equals(str)) {
+                        total++;
+                    }
+                }
+                if (total == 0) {
+                    continue;
+                }
+                System.out.println(str + ": " + total);
+            }
+            System.out.println("全部数据量：" + listAll.size());
+            System.out.println("去重之后的数据量：" + list.size());
+
+
+            if (type.intValue() == 1){
+                if (list != null && list.size() > 0) {
+                    ExecutorService executorService = Executors.newFixedThreadPool(80);
+                    List<Future> futureList = new ArrayList<>();
+
+                    for (NoticeMQ content : list) {
+                        futureList.add(executorService.submit(() -> getDataFromZhongTaiAndSave(content)));
+                    }
+
+                    for (Future future : futureList) {
+                        try {
+                            future.get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    executorService.shutdown();
+
+                }
+            }
+            System.out.println("==========================================此程序运行结束========================================");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getBeiJingGuanrui(Integer type, String date) {
+        ExecutorService executorService1 = Executors.newFixedThreadPool(32);//开启线程池
+        List<NoticeMQ> list = new ArrayList<>();//去重后的数据
+        List<NoticeMQ> listAll = new ArrayList<>();//得到所以数据
+        HashMap<String, String> dataMap = new HashMap<>();
+        List<Future> futureList1 = new ArrayList<>();
+
+        try {
+            //关键词a
+            List<String> aa = LogUtils.readRule("keyWords");
+
+            for (String str : aa) {
+                futureList1.add(executorService1.submit(() -> {
+                    List<NoticeMQ> mqEntities = contentSolr.companyResultsBaoXian("yyyymmdd:["+date+"] AND progid:3 AND catid:[* TO 100] AND (title:\"" + str + "\" OR zhaoBiaoUnit:\"" + str + "\")", str, 2);
+                    log.info(str.trim() + "————" + mqEntities.size());
+                    if (!mqEntities.isEmpty()) {
+                        for (NoticeMQ data : mqEntities) {
+                            if (data.getTitle() != null) {
+                                boolean flag = true;
+                                if (flag){
+                                    listAll.add(data);
+                                    data.setKeyword(str);
+                                    if (!dataMap.containsKey(data.getContentid().toString())) {
+                                        list.add(data);
+                                        dataMap.put(data.getContentid().toString(), "0");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }));
+            }
+
+
+            for (Future future1 : futureList1) {
+                try {
+                    future1.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    executorService1.shutdown();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            executorService1.shutdown();
+
+
+            log.info("全部数据量：" + listAll.size());
+            log.info("去重之后的数据量：" + list.size());
+            log.info("==========================");
+
+
+            ArrayList<String> arrayList = new ArrayList<>();
+
+               /*//关键词a 和 关键词b
+                for (String key : aa) {
+                    for (String str2 : bb) {
+                        arrayList.add(key+"&"+str2);
+                    }
+                }*/
             //关键词c
             for (String key :aa){
                 arrayList.add(key);

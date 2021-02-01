@@ -19,7 +19,8 @@ public class NewBiaoDiWuService {
     private JdbcTemplate bdJdbcTemplate;
 
     // 标的物匹配到的关键词
-    private String[] keywords = {};
+    private String[] keywords = {"牙科综合治疗台","口腔CT","口腔综合治疗台","牙科综合治疗椅","口腔CBCT","牙科手机","口腔颌面锥形束计算机体层摄影设备","涡轮手机","锥形束CT","口腔X射线数字化体层摄影设备","CBCT","电动牙科椅","牙科高速手机","牙科CT","口腔X射线机","牙科影像板扫描仪","口腔数字化影像系统","口腔颌面锥形束计算机体层摄影系统","口腔影像设备","口腔X射线数字化体层摄影系统","牙科慢速手机","大视野CBCT","锥形束计算机体层摄影设备","液压牙科椅","牙科CBCT","电动手机","机械牙科椅","锥形束影像CT","口腔摄影系统","种植机","牙科椅","牙椅","手术椅","种植椅","口腔颌面曲面体层X射线机","曲面体层X射线机","口腔三合一CBCT","口腔数字化体层摄影设备","口腔影像板扫描成像系统","口腔影像板扫描仪",
+            "牙科影像板扫描系统","牙科X射线机","口内X光机","口内x射线机","牙片机","耳鼻喉cbct","耳鼻喉ct","多功能cbct","多功能ct","专科cbct"};
 
     private String SQL = "insert into han_new_bdw(infoId, sum, sum_unit, keyword, serial_number, name, brand, model, " +
             "number, number_unit, price, price_unit, total_price, total_price_unit, configuration) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

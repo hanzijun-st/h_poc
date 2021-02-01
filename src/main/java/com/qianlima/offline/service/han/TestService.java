@@ -52,4 +52,13 @@ public interface TestService {
     void getZongHengDaPeng2(Integer type, String date);
 
     void getZongHengDaPeng3(Integer type, String date);
+
+    /**
+     * 合肥航联
+     * @param type
+     * @param date
+     */
+    void getHeFeiHangLian(Integer type, String date);
+
+    void getBeiJingGuanrui(Integer type, String date);
 }
