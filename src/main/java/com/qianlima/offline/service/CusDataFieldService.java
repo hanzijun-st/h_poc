@@ -767,6 +767,9 @@ public class CusDataFieldService {
             throw new RuntimeException("调用数据详情接口异常， 获取到的数据为 空 ");
         }
         String code = jsonObject.getString("code");
+        if ("1".equals(code)){
+            bdJdbcTemplate.update("INSERT INTO table_code (content_id,code) VALUES (?,?)",infoId,code);
+        }
         if ("-1".equals(code) || "1".equals(code) || "2".equals(code)) {
             log.error("infoId:{} 调用数据详情接口异常, 对应的状态码 code ：{} ", infoId, code);
             throw new RuntimeException("调用数据详情接口异常");
