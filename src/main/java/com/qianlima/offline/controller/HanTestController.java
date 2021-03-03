@@ -5,6 +5,7 @@ import com.qianlima.offline.service.han.AoLinBaSiService;
 import com.qianlima.offline.service.han.CurrencyService;
 import com.qianlima.offline.service.han.TestService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by Administrator on 2021/1/12.
  */
 @RestController
-@RequestMapping("/aolinbasi")
+@RequestMapping("/han")
 @Slf4j
 public class HanTestController {
 
@@ -37,11 +38,6 @@ public class HanTestController {
         return "成功获取url原链接地址---"+urlOriginalLink;
     }
 
-    @GetMapping("/start/getBdw")
-    public String getBdw(){
-        testService.getBdw();
-        return "请求成功---成功获取标的物";
-    }
 
     @GetMapping("/getNewBdw")
     public String getNewBdw(){
@@ -119,4 +115,30 @@ public class HanTestController {
         return "---getBeiJingGuanrui---";
     }
 
+    @ApiOperation("北京宇信科技集团股份有限公司-第三回合")
+    @PostMapping("/getYuxin3")
+    public String getYuxin3(Integer type,String date) throws Exception{
+        testService.getYuxin3(type,date);
+        return "---getYuxin3 is ok---";
+    }
+
+    /**
+     * 获取中标单位联系方式
+     * @param type
+     * @return
+     */
+    @ApiOperation("lianx")
+    @PostMapping("/getLianx")
+    public String getLianx(Integer type) {
+        testService.getLianx(type);
+        return "---getLianx is ok---";
+    }
+
+    @ApiOperation("文思海辉")
+    @PostMapping("/getWenSiHaiHui")
+    public String getWenSiHaiHui(Integer type,String date) throws Exception{
+        testService.getWenSiHaiHuib( type, date);
+        log.info("===============================数据运行结束===================================");
+        return "---getWenSiHaiHui is ok---";
+    }
 }

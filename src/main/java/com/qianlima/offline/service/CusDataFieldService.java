@@ -8,7 +8,6 @@ import com.qianlima.offline.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -16,7 +15,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.solr.common.util.StrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
@@ -41,7 +39,7 @@ public class CusDataFieldService {
     @Qualifier("bdJdbcTemplate")
     private JdbcTemplate bdJdbcTemplate;
 
-    static String apiUrl = "http://inner-datafetcher.intra.qianlima.com/dc/bidding/fields";
+    static String apiUrl = "http://datafetcher.intra.qianlima.com/dc/bidding/fields";
 
     private AtomicInteger atomicInteger=new AtomicInteger(0);
 
@@ -49,10 +47,10 @@ public class CusDataFieldService {
     private final static List<String> kaAreaList = new ArrayList<>();
 
     // 数据入库操作
-    private static final String INSERT_ZT_RESULT_HXR = "INSERT INTO han_data (task_id,keyword,content_id,title,content, province, city, country, url, baiLian_budget, baiLian_amount_unit," +
+    private static final String INSERT_ZT_RESULT_HXR = "INSERT INTO zt_data_result_poc_table (task_id,keyword,content_id,title,content, province, city, country, url, baiLian_budget, baiLian_amount_unit," +
             "xmNumber, bidding_type, progid, zhao_biao_unit, relation_name, relation_way, agent_unit, agent_relation_ame, agent_relation_way, zhong_biao_unit, link_man, link_phone," +
-            " registration_begin_time, registration_end_time, biding_acquire_time, biding_end_time, tender_begin_time, tender_end_time,update_time,type,bidder,notice_types,open_biding_time,is_electronic,code,isfile,keyword_term) " +
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            " registration_begin_time, registration_end_time, biding_acquire_time, biding_end_time, tender_begin_time, tender_end_time,update_time,type,bidder,notice_types,open_biding_time,is_electronic,code,isfile,keyword_term,keywords, infoTypeSegment) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     //获取数据的status,判断是否为99
     private static final String SELECT_PHPCMS_CONTENT_BY_CONTENTID = "SELECT status FROM phpcms_content where contentid = ? ";
@@ -84,7 +82,7 @@ public class CusDataFieldService {
                 map.get("registration_begin_time"), map.get("registration_end_time"), map.get("biding_acquire_time"),
                 map.get("biding_end_time"), map.get("tender_begin_time"), map.get("tender_end_time"), map.get("update_time"),
                 map.get("type"), map.get("bidder"), map.get("notice_types"), map.get("open_biding_time"), map.get("is_electronic"),
-                map.get("code"), map.get("isfile"), map.get("keyword_term"));
+                map.get("code"), map.get("isfile"), map.get("keyword_term"),map.get("keywords"),map.get("infoTypeSegment") );
     }
 
     /**
@@ -278,24 +276,23 @@ public class CusDataFieldService {
                         }
                     }
                 }
-                // 判断百炼数据是否为空
-                if (StringUtils.isBlank(blBudget) && null != object.get("extract_budget")){
-                    blBudget = object.getString("extract_budget");
-                }
-                if (StringUtils.isBlank(blZhongbiaoAmount) && null != object.get("extract_amountUnit")){
-                    blZhongbiaoAmount = object.getString("extract_amountUnit");
-                }
-                if (StringUtils.isBlank(blZhaoBiaoUnit) && null != object.get("extract_zhaoBiaoUnit")){
-                    blZhaoBiaoUnit.append(object.getString("extract_zhaoBiaoUnit"));
-                }
-                if (StringUtils.isBlank(blZhongBiaoUnit) && null != object.get("extract_zhongBiaoUnit")){
-                    blZhongBiaoUnit.append(object.getString("extract_zhongBiaoUnit"));
-                }
-                if (StringUtils.isBlank(blAgents) && null != object.get("extract_agentUnit")){
-                    blAgents.append(object.getString("extract_agentUnit"));
-                }
-
             }
+            // 判断百炼数据是否为空
+            if (StringUtils.isBlank(blBudget) && null != object.get("extract_budget")){
+                blBudget = object.getString("extract_budget");
+            }
+            if (StringUtils.isBlank(blZhongbiaoAmount) && null != object.get("extract_amountUnit")){
+                blZhongbiaoAmount = object.getString("extract_amountUnit");
+            }
+            if (StringUtils.isBlank(blZhaoBiaoUnit) && null != object.get("extract_zhaoBiaoUnit")){
+                blZhaoBiaoUnit.append(object.getString("extract_zhaoBiaoUnit"));
+            }
+            if (StringUtils.isBlank(blZhongBiaoUnit) && null != object.get("extract_zhongBiaoUnit")){
+                blZhongBiaoUnit.append(object.getString("extract_zhongBiaoUnit"));
+            }
+            /*if (StringUtils.isBlank(blAgents) && null != object.get("extract_agentUnit")){
+                blAgents.append(object.getString("extract_agentUnit"));
+            }*/
         }
         resultMap.put("baiLian_budget", blBudget); //获取预算金额
         resultMap.put("baiLian_amount_unit", blZhongbiaoAmount);//获取中标金额
@@ -426,6 +423,7 @@ public class CusDataFieldService {
         String blZhongBiaoUnit = null; //获取自提中标单位
         String blBidder = null; //获取候选人
         String blAgents = null; //百炼代理机构
+        //String projName=null;//项目名称
         for (int d = 0; d < jsonArray.size(); d++) {
             JSONObject object = jsonArray.getJSONObject(d);
             // 获取招标预算
@@ -439,6 +437,8 @@ public class CusDataFieldService {
                 blZhongbiaoAmount = object.getString("extract_amountUnit");
             }  else if (null != object.get("extract_agentUnit")) {
                 blAgents = object.getString("extract_agentUnit");
+           /* } else if (null != object.get("extract_proj_name")) {
+                projName = object.getString("extract_proj_name");*/
             }
         }
         resultMap.put("baiLian_budget", blBudget); //获取预算金额
@@ -447,6 +447,7 @@ public class CusDataFieldService {
         resultMap.put("zhao_biao_unit", blZhaoBiaoUnit);//获取招标单位
         resultMap.put("bidder", blBidder);  //候选人
         resultMap.put("agent_unit", blAgents);  //百炼代理机构
+        //resultMap.put("keyword", projName);  //百炼代理机构
         return resultMap;
     }
 
@@ -460,7 +461,7 @@ public class CusDataFieldService {
         StringBuilder blAgents = new StringBuilder(); //百炼代理机构
         for (int d = 0; d < jsonArray.size(); d++) {
             JSONObject object = jsonArray.getJSONObject(d);
-             if (null != object.getJSONObject("expandField")) {
+            if (null != object.getJSONObject("expandField")) {
                 JSONObject expandField = object.getJSONObject("expandField");
                 if (expandField != null) {
                     //获取百炼预算金额
@@ -559,6 +560,7 @@ public class CusDataFieldService {
         return resultMap;
     }
 
+    // project_invest,project_invest_unit,project_nature,project_owner
     // 转换基础字段部分
     private Map<String, Object> getResultMapWithGenPart(JSONArray jsonArray, Map<String, Object> resultMap, String infoId){
         String isElectronic = null;  // 是否电子招标
@@ -572,10 +574,16 @@ public class CusDataFieldService {
         String xmNumber = null; // 项目编号
         String relationName = null; //招标单位联系人
         String relationWay = null; //招标单位联系方式
-        String linkMan = null; //招标单位联系人
-        String linkPhone = null; //招标单位联系人
-        String agentRelationName = null; //招标单位联系人
-        String agentRelationWay = null; //招标单位联系人
+        String linkMan = null; //中标单位联系人
+        String linkPhone = null; //中标单位联系人
+        String agentRelationName = null; //代理联系人
+        String agentRelationWay = null; //代理联系方式
+        String infoTypeSegment = null;
+        String projectInvest = null;
+        String projectInvestUnit = null;
+        String projectNature = null;
+        String projectOwner = null;
+        String catid = null;
 
         for (int d = 0; d < jsonArray.size(); d++) {
             JSONObject object = jsonArray.getJSONObject(d);
@@ -619,6 +627,20 @@ public class CusDataFieldService {
                     linkMan = zhongbiaoDetail.get("linkman") != null ? zhongbiaoDetail.get("linkman").toString() : null;
                     linkPhone = zhongbiaoDetail.get("linkphone") != null ? zhongbiaoDetail.get("linkphone").toString() : null;
                 }
+            } else if (null != object.get("notice_segment_type")) {
+                infoTypeSegment = object.getString("notice_segment_type");
+            } else if (null != object.get("project_invest")) {
+                projectInvest = object.getString("project_invest");
+            } else if (null != object.get("project_invest_unit")) {
+                projectInvestUnit = object.getString("project_invest_unit");
+            } else if (null != object.get("project_nature")) {
+                projectNature = object.getString("project_nature");
+            } else if (null != object.get("project_owner")) {
+                projectOwner = object.getString("project_owner");
+            } else if (null != object.get("project_owner")) {
+                projectOwner = object.getString("project_owner");
+            } else if (null != object.get("catid")) {
+                catid = object.getString("catid");
             }
         }
 
@@ -641,6 +663,12 @@ public class CusDataFieldService {
         if (StringUtils.isNotBlank(urls.toString())) {
             isHasAddition = "是";
         }
+
+        resultMap.put("catid", catid); //
+        resultMap.put("project_invest", projectInvest); //
+        resultMap.put("project_invest_unit", projectInvestUnit);
+        resultMap.put("project_nature", projectNature); //
+        resultMap.put("project_owner", projectOwner); //
         resultMap.put("title", title); // 标题
         resultMap.put("content", content); //正文
         resultMap.put("province", provinceName); // 省
@@ -659,6 +687,7 @@ public class CusDataFieldService {
         resultMap.put("agent_relation_way", agentRelationWay);
         resultMap.put("link_man", format(linkMan));
         resultMap.put("link_phone", format(linkPhone));
+        resultMap.put("infoTypeSegment", infoTypeSegment);
         resultMap.put("type", "");  // 预留字段1
         resultMap.put("keyword_term", ""); // 预留字段2
         return resultMap;
@@ -750,7 +779,7 @@ public class CusDataFieldService {
             httpGet.setConfig(requestConfig);
             CloseableHttpResponse response = client.execute(httpGet);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                log.info("=====调用分支机构接口===="+infoId);
+                log.info("=====调用分支机构接口====>{}",infoId);
                 String result = EntityUtils.toString(response.getEntity(), "UTF-8");
                 if (StringUtils.isNotBlank(result)){
                     jsonObject = JSON.parseObject(result);
@@ -767,18 +796,14 @@ public class CusDataFieldService {
             throw new RuntimeException("调用数据详情接口异常， 获取到的数据为 空 ");
         }
         String code = jsonObject.getString("code");
-        if ("1".equals(code)){
-            bdJdbcTemplate.update("INSERT INTO table_code (content_id,code) VALUES (?,?)",infoId,code);
-        }
         if ("-1".equals(code) || "1".equals(code) || "2".equals(code)) {
+            if ("1".equals(code)){
+                bdJdbcTemplate.update("INSERT INTO table_code (content_id,code) VALUES (?,?)",infoId,code);
+            }
             log.error("infoId:{} 调用数据详情接口异常, 对应的状态码 code ：{} ", infoId, code);
             throw new RuntimeException("调用数据详情接口异常");
         }
         JSONObject data = jsonObject.getJSONObject("data");
-        if (jsonObject == null){
-            log.error("调用数据详情接口异常", infoId);
-            throw new RuntimeException("调用数据详情接口异常， 获取到的数据内容 为 空 ");
-        }
         Map<String,Object> map = JSONObject.parseObject(data.toString(), Map.class);
         Set<Map.Entry<String, Object>> entries = map.entrySet();
         for (Map.Entry<String, Object> entry : entries) {
@@ -790,9 +815,16 @@ public class CusDataFieldService {
     }
 
 
+    public static void main(String[] args) {
+        CusDataFieldService cusDataFieldService = new CusDataFieldService();
+        JSONArray jsonArrayWithFields = cusDataFieldService.getJSONArrayWithFields("208790280", false);
+        System.out.println(1);
+    }
 
 
-    // 获取中台接口通用字段
+
+
+//     获取中台接口通用字段
 //    private JSONArray getJSONArrayWithFields(String infoId, boolean flag){
 //        JSONArray jsonArray = new JSONArray();
 //        try {

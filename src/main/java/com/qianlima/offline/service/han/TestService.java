@@ -5,10 +5,6 @@ package com.qianlima.offline.service.han;
  */
 public interface TestService {
     /**
-     * solr 中获取条件（用来查询中台数据）
-     */
-    void getBdw();
-    /**
      * 最新标的物
      */
     void getNewBdw();
@@ -61,4 +57,18 @@ public interface TestService {
     void getHeFeiHangLian(Integer type, String date);
 
     void getBeiJingGuanrui(Integer type, String date);
+
+    void getYuxin3(Integer type, String date) throws Exception;
+
+    /**
+     * 联系查询
+     */
+    void getLianx(Integer type);
+
+    /**
+     * 文思海辉
+     * @param type
+     * @param date
+     */
+    void getWenSiHaiHuib(Integer type, String date) throws Exception;
 }

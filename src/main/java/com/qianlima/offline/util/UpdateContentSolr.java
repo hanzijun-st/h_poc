@@ -27,15 +27,15 @@ public class UpdateContentSolr {
     @Qualifier("updateSolr")
     private SolrClient solrClient;
 
-    public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer taskId) {
+public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer taskId) {
         String cursormark = "";
         List<NoticeMQ> resultMap = new ArrayList<>();
 
         while (true) {
             SolrQuery solrQuery = new SolrQuery();
             solrQuery.setQuery(tiaojian);
-            solrQuery.setRows(5000);
-            solrQuery.setFields("fl","id","zhaoBiaoUnit","title");
+            solrQuery.setRows(2000);
+            solrQuery.setFields("fl","id","zhaoBiaoUnit","title","blZhongBiaoUnit","zhongBiaoUnit","zhongRelationWay");
             if (StringUtils.isEmpty(cursormark)) {
                 solrQuery.set(CursorMarkParams.CURSOR_MARK_PARAM, CursorMarkParams.CURSOR_MARK_START);
             } else {
@@ -63,6 +63,7 @@ public class UpdateContentSolr {
                             toMQEntity.setAmount(doc.get("amountUnit") != null ? doc.get("amountUnit").toString() : null);
                             toMQEntity.setNewAmountUnit(doc.get("newAmountUnit") != null ? doc.get("newAmountUnit").toString() : null);
                             toMQEntity.setBudget(doc.get("budget") != null ? doc.get("budget").toString() : null);
+                            toMQEntity.setZhongRelationWay(doc.get("zhongRelationWay") !=null ? doc.get("zhongRelationWay").toString() : null);//中标单位联系方式
                             resultMap.add(toMQEntity);
                         }
                     }

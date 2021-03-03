@@ -4,14 +4,16 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.qianlima.offline.bean.NoticeMQ;
 import com.qianlima.offline.middleground.NewZhongTaiService;
 import com.qianlima.offline.service.CusDataFieldService;
-import com.qianlima.offline.service.PocService;
 import com.qianlima.offline.service.han.AoLinBaSiService;
+import com.qianlima.offline.service.han.TestService;
 import com.qianlima.offline.util.ContentSolr;
 import com.qianlima.offline.util.LogUtils;
 import com.qianlima.offline.util.QianlimaZTUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -31,12 +33,20 @@ public class AoLinBaSiServiceImpl implements AoLinBaSiService {
     private ContentSolr contentSolr;
 
     @Autowired
-    private PocService pocService;
-
-    @Autowired
     private NewZhongTaiService newZhongTaiService;
 
+    @Autowired
+    private CusDataFieldService cusDataFieldService;
 
+    @Autowired
+    @Qualifier("bdJdbcTemplate")
+    private JdbcTemplate bdJdbcTemplate;
+
+
+    public String INSERT_ZT_RESULT_HXR = "INSERT INTO han_data (task_id,keyword,content_id,title,content, province, city, country, url, baiLian_budget, baiLian_amount_unit," +
+            "xmNumber, bidding_type, progid, zhao_biao_unit, relation_name, relation_way, agent_unit, agent_relation_ame, agent_relation_way, zhong_biao_unit, link_man, link_phone," +
+            " registration_begin_time, registration_end_time, biding_acquire_time, biding_end_time, tender_begin_time, tender_end_time,update_time,type,bidder,notice_types,open_biding_time,is_electronic,code,isfile,keyword_term) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     @Override
     public void getAoLinBaSiAndSave() {
         ExecutorService executorService1 = Executors.newFixedThreadPool(32);//开启线程池
@@ -112,7 +122,7 @@ public class AoLinBaSiServiceImpl implements AoLinBaSiService {
             ExecutorService executorService = Executors.newFixedThreadPool(80);
             List<Future> futureList = new ArrayList<>();
             for (NoticeMQ content : list) {
-                futureList.add(executorService.submit(() -> pocService.getDataFromZhongTaiAndSave(content)));
+                futureList.add(executorService.submit(() -> cusDataFieldService.getAllFieldsWithZiTi(content,false)));
             }
             for (Future future : futureList) {
                 try {
@@ -309,7 +319,7 @@ public class AoLinBaSiServiceImpl implements AoLinBaSiService {
                 List<Map<String,Object>> listMap = new ArrayList<>();
                 for (NoticeMQ content : list) {
                    // futureList.add(executorService.submit(() -> pocService.getDataFromZhongTaiAndSave(content)));
-                    futureList.add(executorService.submit(() -> pocService.getDataFromZhongTaiAndList(content)));
+                    futureList.add(executorService.submit(() -> getDataFromZhongTaiAndSave(content)));
                 }
                 if (listMap !=null && listMap.size() >0){
                     newZhongTaiService.saveIntoMySqlByList(listMap);
@@ -434,5 +444,34 @@ public class AoLinBaSiServiceImpl implements AoLinBaSiService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getDataFromZhongTaiAndSave(NoticeMQ noticeMQ) {
+        boolean result = cusDataFieldService.checkStatus(noticeMQ.getContentid().toString());
+        if (result == false) {
+            log.info("contentid:{} 对应的数据状态不是99, 丢弃", noticeMQ.getContentid().toString());
+            return;
+        }
+        Map<String, Object> resultMap = cusDataFieldService.getAllFieldsWithHunHe(noticeMQ, false);
+        if (resultMap != null) {
+            try {
+                saveIntoMysql(resultMap,INSERT_ZT_RESULT_HXR);
+                log.info("数据库存储--->{}",noticeMQ.getContentid());
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+    public void saveIntoMysql(Map<String, Object> map ,String table){
+        bdJdbcTemplate.update(table,map.get("task_id"), map.get("keyword"), map.get("content_id"), map.get("title"),
+                map.get("content"), map.get("province"), map.get("city"), map.get("country"), map.get("url"), map.get("baiLian_budget"),
+                map.get("baiLian_amount_unit"), map.get("xmNumber"), map.get("bidding_type"), map.get("progid"), map.get("zhao_biao_unit"),
+                map.get("relation_name"), map.get("relation_way"), map.get("agent_unit"), map.get("agent_relation_ame"),
+                map.get("agent_relation_way"), map.get("zhong_biao_unit"), map.get("link_man"), map.get("link_phone"),
+                map.get("registration_begin_time"), map.get("registration_end_time"), map.get("biding_acquire_time"),
+                map.get("biding_end_time"), map.get("tender_begin_time"), map.get("tender_end_time"), map.get("update_time"),
+                map.get("type"), map.get("bidder"), map.get("notice_types"), map.get("open_biding_time"), map.get("is_electronic"),
+                map.get("code"), map.get("isfile"), map.get("keyword_term"));
     }
 }

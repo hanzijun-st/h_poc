@@ -20,10 +20,7 @@ public interface CurrencyService {
      */
     void getOnePoc(Params params);
 
-    /**
-     * 标的物
-     */
-    void getBdw();
+
 
     /**
      * 行业标签
@@ -39,10 +36,6 @@ public interface CurrencyService {
      */
     String getHttpGet(String contentId);
 
-    /**
-     * 通用方法 ---获取标的物
-     */
-    void getTongYongBdw(String contentId) throws Exception;
 
     /**
      * 通用插入中台数据库的操作
