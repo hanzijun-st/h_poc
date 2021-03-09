@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class TencentContentSolr {
     @Autowired
-    @Qualifier("ictSolr")
+    //@Qualifier("ictSolr")
     private SolrClient solrClient;
 
     public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer taskId) {

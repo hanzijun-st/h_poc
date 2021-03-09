@@ -71,4 +71,42 @@ public interface TestService {
      * @param date
      */
     void getWenSiHaiHuib(Integer type, String date) throws Exception;
+
+    /**
+     * 文思海辉第二回合-规则二
+     * @param type
+     * @param date
+     */
+    void getWenSiHaiHuib2_2(Integer type, String date);
+
+    /**
+     * 奥林巴斯第二回合=规则二
+     * @param type
+     * @param date
+     */
+    void getAolinbasi2(Integer type, String date);
+
+    /**
+     * 奥林巴斯第二回合-规则三
+     * @param type
+     * @param date
+     */
+    void getAolinbasi2_3(Integer type, String date);
+
+    void getAolinbasi2_qw(Integer type, String date);
+
+    /**
+     * 贝登2016年数据
+     * @param type
+     * @param date
+     */
+    void getBeiDeng2016(Integer type, String date) throws Exception;
+
+    /**
+     * 贝登---第二回合2016年数据
+     * @param type
+     * @param date
+     * @throws Exception
+     */
+    void getBeiDeng20162(Integer type, String date) throws Exception;
 }

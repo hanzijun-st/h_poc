@@ -24,7 +24,7 @@ import java.util.List;
 public class ContentSolr {
 
     @Autowired
-    @Qualifier("allSolr")
+    //@Qualifier("allSolr")
     private SolrClient solrClient;
 
     public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer taskId) {

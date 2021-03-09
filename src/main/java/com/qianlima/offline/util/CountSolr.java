@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class CountSolr {
 
     @Autowired
-    @Qualifier("allSolr")
+    //@Qualifier("allSolr")
     private SolrClient solrClient;
 
     public Long companyResultsBaoXian(String tiaojian) throws Exception {

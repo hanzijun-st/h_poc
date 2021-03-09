@@ -103,21 +103,26 @@ qlm:
   data:
     lasttimeFile: /usr/local/ka/producer/lasttime.txt
     endtimeFile: /usr/local/ka/producer/endtime.txt
-    allsolr: http://172.18.30.12:8984/solr/new_all_shard3_replica1
+    #allsolr: http://172.18.30.12:8984/solr/new_all_shard3_replica1
 
-    newSolr: http://172.18.30.12:8984/solr/new_all_shard3_replica1
+    #newSolr: http://172.18.30.12:8984/solr/new_all_shard3_replica1
 
     #最新solr 2017 - 2021年的只有招投标数据，审批和拟在建数据仍然查询search_normal
-    updateSolr: http://172.18.30.12:8984/solr/ka_info_shard3_replica1
+    #updateSolr: http://172.18.30.12:8984/solr/ka_info_shard3_replica1
 
     #全量的数据 包含今天的数据
-    aliSolr: http://47.104.20.30:8984/solr/ka_info_shard1_replica1
+    #aliSolr: http://47.104.20.30:8984/solr/ka_info_shard1_replica1
     #allsolr: http://172.18.30.12:8984/solr/search_normal_shard3_replica1
     #    http://172.18.30.12:8984/solr/qianlima_all_in_shard1_replica1
     #    http://172.18.30.12:8984/solr/search_normal_shard3_replica1
-    ictsolr: http://172.18.30.12:8984/solr/qianlima_ict_shard2_replica1
-    QYHYsolr: http://120.27.23.156:8984/solr/qlm_qy_info
-    normalsolr: http://172.18.30.12:8984/solr/search_normal_shard3_replica1
+    #ictsolr: http://172.18.30.12:8984/solr/qianlima_ict_shard2_replica1
+    #QYHYsolr: http://120.27.23.156:8984/solr/qlm_qy_info
+    #normalsolr: http://172.18.30.12:8984/solr/search_normal_shard3_replica1
+    #线上solr 查全量
+    onlineSolr: http://47.104.20.30:8984/solr/ka_info_shard1_replica1
+    solr:
+          host: solr1:2181,solr2:2181,solr3:2181
+          defaultCollection: ka_info
 data:
   contentid: C:\Users\Dell\Desktop\qianlima\ka_for_poc\src\main\resources\rule\contentid.txt
 zt:

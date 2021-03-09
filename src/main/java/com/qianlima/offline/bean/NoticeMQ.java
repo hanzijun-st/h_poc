@@ -82,4 +82,6 @@ public class NoticeMQ implements Serializable {
     private String areaid;
 
     private String zhongRelationWay;
+
+    private String heici;
 }

@@ -17,17 +17,22 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+/**
+ * 线上solr
+ */
 @Component
 @Slf4j
-public class UpdateContentSolr {
+public class OnlineContentSolr {
 
     @Autowired
-    //@Qualifier("updateSolr")
+    //@Qualifier("onlineSolr")
     private SolrClient solrClient;
 
-public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer taskId) {
+    public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer taskId) {
         String cursormark = "";
         List<NoticeMQ> resultMap = new ArrayList<>();
 
@@ -35,7 +40,7 @@ public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer
             SolrQuery solrQuery = new SolrQuery();
             solrQuery.setQuery(tiaojian);
             solrQuery.setRows(5000);
-            solrQuery.setFields("fl","id","zhaoBiaoUnit","title","blZhongBiaoUnit","zhongBiaoUnit","zhongRelationWay");
+            //solrQuery.setFields("fl","id","zhaoBiaoUnit","title");
             if (StringUtils.isEmpty(cursormark)) {
                 solrQuery.set(CursorMarkParams.CURSOR_MARK_PARAM, CursorMarkParams.CURSOR_MARK_START);
             } else {
@@ -63,7 +68,6 @@ public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer
                             toMQEntity.setAmount(doc.get("amountUnit") != null ? doc.get("amountUnit").toString() : null);
                             toMQEntity.setNewAmountUnit(doc.get("newAmountUnit") != null ? doc.get("newAmountUnit").toString() : null);
                             toMQEntity.setBudget(doc.get("budget") != null ? doc.get("budget").toString() : null);
-                            toMQEntity.setZhongRelationWay(doc.get("zhongRelationWay") !=null ? doc.get("zhongRelationWay").toString() : null);//中标单位联系方式
                             resultMap.add(toMQEntity);
                         }
                     }
@@ -81,5 +85,41 @@ public List<NoticeMQ> companyResultsBaoXian(String tiaojian, String key, Integer
             log.info("=====关键词:" + key + " solr执行到了：" + resultMap.size());
         }
         return resultMap;
+    }
+
+    /**
+     * 查询solr中的数据  通过输入的年份
+     * @param tiaojian  查询条件
+     * @param time 输入的时间
+     * @return
+     */
+    public Map<String,Object> getSolr(String tiaojian,String time){
+        Map<String,Object> map = new HashMap<>();
+
+        tiaojian = "yyyymm:"+time+" AND "+tiaojian;
+        String cursormark = "";
+
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(tiaojian);
+        solrQuery.setRows(5000);
+        solrQuery.setFields("fl","id","zhaoBiaoUnit","title");
+        if (StringUtils.isEmpty(cursormark)) {
+            solrQuery.set(CursorMarkParams.CURSOR_MARK_PARAM, CursorMarkParams.CURSOR_MARK_START);
+        } else {
+            solrQuery.set(CursorMarkParams.CURSOR_MARK_PARAM, cursormark);
+        }
+        solrQuery.setSort("id", SolrQuery.ORDER.desc);
+        try {
+            QueryResponse response = solrClient.query(solrQuery, SolrRequest.METHOD.POST);
+            SolrDocumentList results = response.getResults();
+            if (results != null && results.size() > 0) {
+                map.put(time,results.getNumFound());
+            } else {
+                map.put(time,0);
+            }
+        } catch (SolrServerException | IOException e) {
+            log.error("跑数据异常,{}", e);
+        }
+        return map;
     }
 }

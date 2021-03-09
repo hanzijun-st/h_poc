@@ -141,4 +141,50 @@ public class HanTestController {
         log.info("===============================数据运行结束===================================");
         return "---getWenSiHaiHui is ok---";
     }
+    @ApiOperation("文思海辉-2-规则二")
+    @PostMapping("/getWenSiHaiHui2_2")
+    public String getWenSiHaiHui2_2(Integer type,String date) throws Exception{
+        testService.getWenSiHaiHuib2_2( type, date);
+        log.info("===============================数据运行结束===================================");
+        return "---getWenSiHaiHui2_2 is ok---";
+    }
+    @ApiOperation("奥林巴斯-第二回合")
+    @PostMapping("/getAolinbasi2")
+    public String getAolinbasi2(Integer type,String date) throws Exception{
+        testService.getAolinbasi2( type, date);
+        log.info("===============================数据运行结束===================================");
+        return "---getAolinbasi2 is ok---";
+    }
+
+    @ApiOperation("奥林巴斯-第二回合_规则3")
+    @PostMapping("/getAolinbasi2_3")
+    public String getAolinbasi2_3(Integer type,String date) throws Exception{
+        testService.getAolinbasi2_3( type, date);
+        log.info("===============================数据运行结束===================================");
+        return "---getAolinbasi2_3 is ok---";
+    }
+
+    @ApiOperation("奥林巴斯-第二回合(全文检索关键词b)")
+    @PostMapping("/getAolinbasi2_qw")
+    public String getAolinbasi2_qw(Integer type,String date){
+        testService.getAolinbasi2_qw(type, date);
+        log.info("===============================数据运行结束===================================");
+        return "---getAolinbasi2_qw is ok---";
+    }
+
+    @ApiOperation("贝登-2016年数据")
+    @PostMapping("/getBeiDeng2016")
+    public String getBeiDeng2016(Integer type,String date) throws Exception{
+        testService.getBeiDeng2016( type, date);
+        log.info("===============================数据运行结束===================================");
+        return "---getBeiDeng2016 is ok---";
+    }
+
+    @ApiOperation("贝登-第二回合2016年数据")
+    @PostMapping("/getBeiDeng20162")
+    public String getBeiDeng20162(Integer type,String date) throws Exception{
+        testService.getBeiDeng20162(type, date);
+        log.info("===============================数据运行结束===================================");
+        return "---getBeiDeng20162 is ok---";
+    }
 }
