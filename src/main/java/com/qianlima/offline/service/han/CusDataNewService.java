@@ -4,7 +4,9 @@ package com.qianlima.offline.service.han;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.qianlima.offline.bean.ConstantBean;
 import com.qianlima.offline.bean.NoticeMQ;
+import com.qianlima.offline.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -39,6 +41,10 @@ public class CusDataNewService {
     @Qualifier("bdJdbcTemplate")
     private JdbcTemplate bdJdbcTemplate;
 
+    @Autowired
+    @Qualifier("djeJdbcTemplate")
+    private JdbcTemplate djeJdbcTemplate;
+
     static String apiUrl = "http://datafetcher.intra.qianlima.com/dc/bidding/fields";
 
     private AtomicInteger atomicInteger=new AtomicInteger(0);
@@ -47,10 +53,17 @@ public class CusDataNewService {
     private final static List<String> kaAreaList = new ArrayList<>();
 
     // 数据入库操作
-    public static final String INSERT_ZT_RESULT_HXR = "INSERT INTO han_new_data (task_id,keyword,content_id,title,content, province, city, country, url, baiLian_budget, baiLian_amount_unit," +
+    public static final String INSERT_ZT_RESULT_HXR = "INSERT INTO han_new_data_hb (task_id,keyword,content_id,title,content, province, city, country, url, baiLian_budget, baiLian_amount_unit," +
             "xmNumber, bidding_type, progid, zhao_biao_unit, relation_name, relation_way, agent_unit, agent_relation_ame, agent_relation_way, zhong_biao_unit, link_man, link_phone," +
-            " registration_begin_time, registration_end_time, biding_acquire_time, biding_end_time, tender_begin_time, tender_end_time,update_time,type,bidder,notice_types,open_biding_time,is_electronic,code,isfile,keyword_term,keywords, infoTypeSegment) " +
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            " registration_begin_time, registration_end_time, biding_acquire_time, biding_end_time, tender_begin_time, tender_end_time,update_time,type,bidder,notice_types,open_biding_time," +
+            "is_electronic,code,isfile,keyword_term,keywords, infoTypeSegment,monitorUrl, pocDetailUrl) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+    public static final String INSERT_ZT_RESULT_HXR2 = "INSERT INTO han_new_data2 (task_id,keyword,content_id,title,content, province, city, country, url, baiLian_budget, baiLian_amount_unit," +
+            "xmNumber, bidding_type, progid, zhao_biao_unit, relation_name, relation_way, agent_unit, agent_relation_ame, agent_relation_way, zhong_biao_unit, link_man, link_phone," +
+            " registration_begin_time, registration_end_time, biding_acquire_time, biding_end_time, tender_begin_time, tender_end_time,update_time,type,bidder,notice_types,open_biding_time," +
+            "is_electronic,code,isfile,keyword_term,keywords, infoTypeSegment,monitorUrl, pocDetailUrl) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     //获取数据的status,判断是否为99
     private static final String SELECT_PHPCMS_CONTENT_BY_CONTENTID = "SELECT status FROM phpcms_content where contentid = ? ";
@@ -83,9 +96,17 @@ public class CusDataNewService {
                 map.get("registration_begin_time"), map.get("registration_end_time"), map.get("biding_acquire_time"),
                 map.get("biding_end_time"), map.get("tender_begin_time"), map.get("tender_end_time"), map.get("update_time"),
                 map.get("type"), map.get("bidder"), map.get("notice_types"), map.get("open_biding_time"), map.get("is_electronic"),
-                map.get("code"), map.get("isfile"), map.get("keyword_term"),map.get("keywords"),map.get("infoTypeSegment"));
+                map.get("code"), map.get("isfile"), map.get("keyword_term"),map.get("keywords"),map.get("infoTypeSegment"),map.get("monitorUrl"),map.get("pocDetailUrl"));
     }
 
+    public void saveIntoMysqlToAli(NoticeMQ noticeMQ){
+        bdJdbcTemplate.update(INSERT_ZT_RESULT_HXR2,null, noticeMQ.getKeyword(), noticeMQ.getContentid(), noticeMQ.getTitle(),
+                null, noticeMQ.getNewProvince(), noticeMQ.getNewCity(), noticeMQ.getNewCountry(), noticeMQ.getUrl(), noticeMQ.getBudget(),
+                noticeMQ.getAmountUnit(), noticeMQ.getXmNumber(), noticeMQ.getBiddingType(), noticeMQ.getProgid(), noticeMQ.getZhaoBiaoUnit(),
+                noticeMQ.getZhaoRelationName(), noticeMQ.getZhaoRelationWay(),noticeMQ.getAgentUnit(), noticeMQ.getAgentRelationName(),
+                noticeMQ.getAgentRelationWay(),noticeMQ.getZhongBiaoUnit(), noticeMQ.getZhongRelationName(), noticeMQ.getZhongRelationWay(),
+                null, null, null, null, null,null, noticeMQ.getUpdatetime(),null, null, null, null, null, null, null, null,noticeMQ.getKeys(),null);
+    }
     /**
      * 获取数据接口（全部自提字段）, flag 是否需要"正文"字段 ture：需要  false：不需要
      */
@@ -104,6 +125,8 @@ public class CusDataNewService {
             hashMap.put("keyword", noticeMQ.getKeyword());
             hashMap.put("content_id", noticeMQ.getContentid().toString()); // contentId
             hashMap.put("code", noticeMQ.getF()); //F词
+            hashMap.put("monitorUrl", "http://monitor.ka.qianlima.com/#/checkDetails?pushId=" + noticeMQ.getContentid());
+            hashMap.put("pocDetailUrl", "http://cusdata.qianlima.com/detail/" + noticeMQ.getContentid() + ".html");
         }
         return hashMap;
     }
@@ -693,7 +716,7 @@ public class CusDataNewService {
         resultMap.put("link_phone", format(linkPhone));
         resultMap.put("infoTypeSegment", infoTypeSegment);
         resultMap.put("type", "");  // 预留字段1
-        resultMap.put("keyword_term", ""); // 预留字段2
+        resultMap.put("keyword_term", extract_proj_name); // 目前是项目
         resultMap.put("extract_proj_name", extract_proj_name); // 预留字段2
         return resultMap;
     }
@@ -757,7 +780,11 @@ public class CusDataNewService {
             }
         }
         resultMap.put("registration_begin_time", registrationBeginTime);  //报名开始时间
-        resultMap.put("registration_end_time", registrationEndTime); //报名截止时间
+        if (StrUtil.isNotEmpty(registrationEndTime)){
+            resultMap.put("registration_end_time", com.qianlima.offline.util.DateUtils.parseDateFromDateStr(registrationEndTime)); //报名截止时间
+        }else {
+            resultMap.put("registration_end_time", null); //报名截止时间
+        }
         resultMap.put("biding_acquire_time", bidingAcquireTime);  //标书获取时间
         resultMap.put("open_biding_time", openBidingTime);  //开标时间
         resultMap.put("tender_begin_time", tenderBeginTime);  //投标开始时间
@@ -780,7 +807,7 @@ public class CusDataNewService {
             httpGet.setConfig(requestConfig);
             CloseableHttpResponse response = client.execute(httpGet);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                log.info("=====调用分支机构接口====");
+                log.info("=====调用中台接口===="+infoId);
                 String result = EntityUtils.toString(response.getEntity(), "UTF-8");
                 if (StringUtils.isNotBlank(result)){
                     jsonObject = JSON.parseObject(result);
@@ -799,18 +826,24 @@ public class CusDataNewService {
         String code = jsonObject.getString("code");
         if ("-1".equals(code) || "1".equals(code) || "2".equals(code)) {
             if ("1".equals(code)){
-                bdJdbcTemplate.update("INSERT INTO table_code (content_id,code) VALUES (?,?)",infoId,code);
+                try {
+                    bdJdbcTemplate.update("INSERT INTO table_code (content_id,code) VALUES (?,?)",infoId,code);
+                }catch (Exception e){
+                    log.error("table_code表中插入重复的数据", e);
+                }
             }
             log.error("infoId:{} 调用数据详情接口异常, 对应的状态码 code ：{} ", infoId, code);
-            throw new RuntimeException("调用数据详情接口异常");
+            throw new RuntimeException("调用数据详情接口异常，对应的状态码:"+code);
         }
         JSONObject data = jsonObject.getJSONObject("data");
-        Map<String,Object> map = JSONObject.parseObject(data.toString(), Map.class);
-        Set<Map.Entry<String, Object>> entries = map.entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-            JSONObject result = new JSONObject();
-            result.put(entry.getKey(), entry.getValue());
-            jsonArray.add(result);
+        if (data !=null){
+            Map<String,Object> map = JSONObject.parseObject(data.toString(), Map.class);
+            Set<Map.Entry<String, Object>> entries = map.entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                JSONObject result = new JSONObject();
+                result.put(entry.getKey(), entry.getValue());
+                jsonArray.add(result);
+            }
         }
         return jsonArray;
     }
@@ -851,6 +884,29 @@ public class CusDataNewService {
             }
         }
         return resultMap;
+    }
+
+    /**
+     * 获取正文字段
+     * @param noticeMQ
+     * @return
+     */
+    public String getContent(NoticeMQ noticeMQ){
+
+        //String title = map.get("title") != null ? map.get("title").toString() : "";//标题
+        //获取正文字段
+        List<Map<String, Object>> contentList = gwJdbcTemplate.queryForList(ConstantBean.SELECT_ITEM_CONTENT_BY_CONTENTID, noticeMQ.getContentid().toString());
+        if (contentList == null || contentList.size() <=0){
+            return "";
+        }
+        String content = contentList.get(0).get("content").toString();//正文字段
+
+       /* String tempContent = content;//设定不变正文字段，下文使用
+        content = MathUtil.delHTMLTag(content);//去除正文中的html
+        content = title +"&" + content;// 标题 + 正文
+        content = content.toUpperCase();//将最后正文的字符转成大写
+        title = title.toUpperCase();//将标题字符转成大写*/
+        return content;
     }
 }
 

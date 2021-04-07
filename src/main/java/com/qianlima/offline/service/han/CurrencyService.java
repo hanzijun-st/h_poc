@@ -2,6 +2,7 @@ package com.qianlima.offline.service.han;
 
 import com.qianlima.offline.bean.Params;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,5 +44,19 @@ public interface CurrencyService {
      * @param sql 对应的sql
      */
     void saveTyInto(Map<String, Object> map, String sql);
+
+    /**
+     *  本地
+     * @param name
+     * @param list
+     */
+    void readFileByNameBd(String name,List<String> list);
+
+    /**
+     * 测试服务器
+     * @param name
+     * @param list
+     */
+    void readFileByName(String name,List<String> list);
 
 }

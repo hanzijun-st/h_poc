@@ -5,6 +5,7 @@ import com.qianlima.offline.service.han.AoLinBaSiService;
 import com.qianlima.offline.service.han.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,62 @@ public class TestController {
         }
         return "---getDx---";
     }
+
+    @ApiOperation("筛选标题中含有...的项目名称")
+    @RequestMapping(value = "/getProjectName", method = RequestMethod.GET)
+    public String getProjectName(){
+        try {
+            testService.getProjectName();
+        } catch (Exception e) {
+
+        }
+        return "---getXiangmuMingcheng---";
+    }
+
+    @ApiOperation("虎豹集团")
+    @RequestMapping(value = "/getHuBao", method = RequestMethod.GET)
+    public String getHuBao(String date,Integer type){
+        try {
+            testService.getHuBao(date,type);
+        } catch (Exception e) {
+
+        }
+        return "---getHuBao---";
+    }
+    @ApiOperation("虎豹集团-第二回合")
+    @RequestMapping(value = "/getHuBao2", method = RequestMethod.GET)
+    public String getHuBao2(String date,Integer type,Integer fileType){
+        try {
+            testService.getHuBao2(date,type,fileType);
+        } catch (Exception e) {
+
+        }
+        return "---getHuBao2 is ok---";
+    }
+
+    @ApiOperation("新鸿通科技")
+    @RequestMapping(value = "/getXinhongtong", method = RequestMethod.GET)
+    public String getXinhongtong(String date,Integer type){
+        try {
+            testService.getXinhongtong(date,type);
+        } catch (Exception e) {
+
+        }
+        return "---getXinhongtong is ok---";
+    }
+
+    @ApiOperation("项目数据检查")
+    @RequestMapping(value = "/getXiangmuShuju", method = RequestMethod.GET)
+    public String getXiangmuShuju(String date,Integer type){
+        try {
+            testService.getXiangmuShuju(date,type);
+        } catch (Exception e) {
+
+        }
+        return "---getXiangmuShuju is ok---";
+    }
+
+
 
 }
 

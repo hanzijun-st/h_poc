@@ -187,4 +187,34 @@ public class HanTestController {
         log.info("===============================数据运行结束===================================");
         return "---getBeiDeng20162 is ok---";
     }
+
+    @ApiOperation("阿里标题调查")
+    @PostMapping(value = "/getAliBiaoti",produces = "text/plain;charset=utf-8")
+    public String getAliBiaoti(Integer type,String date,String progidStr) {
+        testService.getAliBiaoti(type, date,progidStr);
+        log.info("===============================数据运行结束===================================");
+        return "---阿里标题调查 接口运行结束---";
+    }
+
+    @ApiOperation("毕马威中国-规则二")
+    @PostMapping(value = "/getBiMaWeiByTitle_2",produces = "text/plain;charset=utf-8")
+    public String getBiMaWeiByTitle_2(Integer type,String date,String progidStr) {
+        testService.getBiMaWeiByTitle_2(type, date,progidStr);
+        log.info("===============================数据运行结束===================================");
+        return "---毕马威中国-规则二 接口运行结束---";
+    }
+    @ApiOperation("毕马威中国-规则二-全文")
+    @PostMapping(value = "/getBiMaWeiByTitle_2_1",produces = "text/plain;charset=utf-8")
+    public String getBiMaWeiByTitle_2_1(Integer type,String date,String progidStr) {
+        testService.getBiMaWeiByTitle_2_1(type, date,progidStr);
+        log.info("===============================数据运行结束===================================");
+        return "---毕马威中国-规则二-全文 接口运行结束---";
+    }
+    @ApiOperation("陕西星宝莱厨房设备有限公司-第二回合")
+    @PostMapping(value = "/getShanXiXingBaoLai2_1",produces = "text/plain;charset=utf-8")
+    public String getShanXiXingBaoLai2_1(Integer type,String date,String progidStr) {
+        testService.getShanXiXingBaoLai2_1(type, date,progidStr);
+        log.info("===============================数据运行结束===================================");
+        return "---陕西星宝莱厨房设备有限公司-第二回合 接口运行结束---";
+    }
 }

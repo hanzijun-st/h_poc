@@ -56,18 +56,37 @@ public class OnlineContentSolr {
                         if (doc.containsKey("id") && null != doc.get("id")) {
                             NoticeMQ toMQEntity = new NoticeMQ();
                             toMQEntity.setContentid(Long.valueOf(doc.get("id").toString()));
-                            toMQEntity.setTitle(doc.get("title") != null ? doc.get("title").toString() : null);
-                            toMQEntity.setZhaoBiaoUnit(doc.get("zhaoBiaoUnit") != null ? doc.get("zhaoBiaoUnit").toString() : null);
-                            toMQEntity.setBlzhaoBiaoUnit(doc.get("blZhaoBiaoUnit") != null ? doc.get("blZhaoBiaoUnit").toString() : null);
-                            toMQEntity.setZhongBiaoUnit(doc.get("blZhongBiaoUnit") != null ? doc.get("blZhongBiaoUnit").toString() : null);
-                            toMQEntity.setUpdatetime(doc.get("updatetime") != null ? doc.get("updatetime").toString() : null);
-                            toMQEntity.setTags(doc.get("tags") != null ? doc.get("tags").toString() : null);
-                            toMQEntity.setTags(doc.get("tagids") != null ? doc.get("tagids").toString() : null);
+                            toMQEntity.setTitle(doc.get("title") != null ? doc.get("title").toString() : null);//标题
+                            toMQEntity.setZhaoBiaoUnit(doc.get("zhaoBiaoUnit") != null ? doc.get("zhaoBiaoUnit").toString() : null);//招标单位
+                            toMQEntity.setBlzhaoBiaoUnit(doc.get("blZhaoBiaoUnit") != null ? doc.get("blZhaoBiaoUnit").toString() : null);//百炼招标单位
+                            toMQEntity.setZhongBiaoUnit(doc.get("blZhongBiaoUnit") != null ? doc.get("blZhongBiaoUnit").toString() : null);//中标单位
+                            toMQEntity.setUpdatetime(doc.get("updatetime") != null ? doc.get("updatetime").toString() : null);//发布时间
+                            //toMQEntity.setTags(doc.get("tags") != null ? doc.get("tags").toString() : null);//
+                            //toMQEntity.setTags(doc.get("tagids") != null ? doc.get("tagids").toString() : null);//
                             toMQEntity.setKey(key);
-                            toMQEntity.setTaskId(taskId);
-                            toMQEntity.setAmount(doc.get("amountUnit") != null ? doc.get("amountUnit").toString() : null);
-                            toMQEntity.setNewAmountUnit(doc.get("newAmountUnit") != null ? doc.get("newAmountUnit").toString() : null);
-                            toMQEntity.setBudget(doc.get("budget") != null ? doc.get("budget").toString() : null);
+                            toMQEntity.setTaskId(taskId);//
+                            toMQEntity.setAmount(doc.get("amountUnit") != null ? doc.get("amountUnit").toString() : null);//中标金额
+                            toMQEntity.setAmountUnit(doc.get("amountUnit") != null ? doc.get("amountUnit").toString() : null);//中标金额
+
+                            toMQEntity.setNewAmountUnit(doc.get("newAmountUnit") != null ? doc.get("newAmountUnit").toString() : null);//混合中标金额
+                            toMQEntity.setBudget(doc.get("budget") != null ? doc.get("budget").toString() : null);//招标预算金额
+                            toMQEntity.setNewZhongBiaoUnit(doc.get("newZhongBiaoUnit") != null ? doc.get("newZhongBiaoUnit").toString() : null);//混合中标单位
+                            toMQEntity.setXmNumber(doc.get("xmNumber") != null ? doc.get("xmNumber").toString() : null);//项目编号
+                            toMQEntity.setNewProvince(doc.get("newProvince") != null ? doc.get("newProvince").toString() : null);//省
+                            toMQEntity.setNewCity(doc.get("newCity") != null ? doc.get("newCity").toString() : null);//市
+                            toMQEntity.setNewCountry(doc.get("newCountry") != null ? doc.get("newCountry").toString() : null);//县
+                            toMQEntity.setBiddingType(doc.get("biddingType") != null ? doc.get("biddingType").toString() : null);//招标方式
+                            toMQEntity.setUrl(doc.get("url") != null ? doc.get("url").toString() : null);//url
+
+                            toMQEntity.setProgid(doc.get("progid") != null ? doc.get("progid").toString() : null);//信息类型
+                            toMQEntity.setZhaoRelationName(doc.get("zhaoRelationName") != null ? doc.get("zhaoRelationName").toString() : null);//自提招标单位联系人
+                            toMQEntity.setZhaoRelationWay(doc.get("zhaoRelationWay") != null ? doc.get("zhaoRelationWay").toString() : null);//自提招标单位联系方式
+                            toMQEntity.setAgentUnit(doc.get("agentUnit") != null ? doc.get("agentUnit").toString() : null);//代理机构
+                            toMQEntity.setAgentRelationName(doc.get("agentRelationName") != null ? doc.get("agentRelationName").toString() : null);//代理机构联系人
+                            toMQEntity.setAgentRelationWay(doc.get("agentRelationWay") != null ? doc.get("agentRelationWay").toString() : null);//代理机构联系方式
+                            toMQEntity.setZhongRelationName(doc.get("zhongRelationName") != null ? doc.get("zhongRelationName").toString() : null);//自提中标单位联系人
+                            toMQEntity.setZhongRelationWay(doc.get("zhongRelationWay") != null ? doc.get("zhongRelationWay").toString() : null);//自提中标单位联系方式
+
                             resultMap.add(toMQEntity);
                         }
                     }

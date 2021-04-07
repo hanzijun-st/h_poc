@@ -1,6 +1,7 @@
 package com.qianlima.offline.service.han.impl;
 
 import com.qianlima.offline.bean.Area;
+import com.qianlima.offline.bean.ConstantBean;
 import com.qianlima.offline.bean.NoticeMQ;
 import com.qianlima.offline.bean.Params;
 import com.qianlima.offline.middleground.NewZhongTaiService;
@@ -9,6 +10,7 @@ import com.qianlima.offline.service.CusDataFieldService;
 import com.qianlima.offline.service.han.CurrencyService;
 import com.qianlima.offline.util.ContentSolr;
 import com.qianlima.offline.util.LogUtils;
+import com.qianlima.offline.util.ReadFileUtil;
 import com.qianlima.offline.util.UpdateContentSolr;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Autowired
     private CusDataFieldService cusDataFieldService;
 
+    @Autowired
+    @Qualifier("djeJdbcTemplate")
+    private JdbcTemplate djeJdbcTemplate;
 
     @Autowired
     private MyRuleUtils myRuleUtils;
@@ -410,7 +415,14 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
         return null;
     }
-
+    @Override
+    public void readFileByName(String name,List<String> list) {
+        ReadFileUtil.readFile(ConstantBean.FILL_URL,name+".txt",list);
+    }
+    @Override
+    public void readFileByNameBd(String name,List<String> list) {
+        ReadFileUtil.readFile(ConstantBean.FILL_URL_BD,name+".txt",list);
+    }
 
     @Override
     public void saveTyInto(Map<String, Object> map, String sql) {
@@ -435,6 +447,20 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
         Map<String, Object> resultMap = cusDataFieldService.getAllFieldsWithZiTi(noticeMQ, false);
         if (resultMap != null) {
+            String contentId = resultMap.get("content_id").toString();
+            //进行大金额替换操作
+            List<Map<String, Object>> maps = djeJdbcTemplate.queryForList("select info_id, winner_amount, budget from amount_code where info_id = ?", contentId);
+            if (maps != null && maps.size() > 0){
+                // 由于大金额处理的特殊性，只能用null进行判断
+                String winnerAmount = maps.get(0).get("winner_amount") != null ? maps.get(0).get("winner_amount").toString() : null;
+                if (winnerAmount != null){
+                    resultMap.put("baiLian_amount_unit", winnerAmount);
+                }
+                String budget = maps.get(0).get("budget") != null ? maps.get(0).get("budget").toString() : null;
+                if (budget != null){
+                    resultMap.put("baiLian_budget", budget);
+                }
+            }
           /*  String contentInfo = resultMap.get("content").toString();
             String content = processAboutContent(contentInfo);
             if (StringUtils.isNotBlank(content)) {

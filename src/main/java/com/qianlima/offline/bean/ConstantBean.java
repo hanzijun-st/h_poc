@@ -34,4 +34,12 @@ public class ConstantBean {
      * 词包规则分隔符(标签name)
      */
     public static final String RULE_SEPARATOR_NAME = ",";
+
+    /**
+     *  本地-下载数据量统计专用链接
+     */
+    public static final String FILL_URL_BD ="C:/Users/Administrator/Desktop/dataCount";
+
+
+    public static final String FILL_URL ="/usr/local/ka/hzj";
 }
