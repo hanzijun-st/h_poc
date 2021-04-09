@@ -211,7 +211,7 @@
     </dependencies>
 
     <build>
-        <finalName>ka_copy_data</finalName>
+        <finalName>han_poc</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
