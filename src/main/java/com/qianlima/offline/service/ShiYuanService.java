@@ -272,7 +272,7 @@ public class ShiYuanService {
         CloseableHttpClient httpClient = getHttpClient();
         try {
             //用get方法发送http请求
-            HttpGet get = new HttpGet("http://cusdata.qianlima.com/crm/info/page" +
+            HttpGet get = new HttpGet("http://monitor.ka.qianlima.com/crm/info/page" +
                     "?userId=1&pageSize=200&cursorMark="+cursorMark);
 
             CloseableHttpResponse httpResponse = null;

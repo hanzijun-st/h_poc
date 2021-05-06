@@ -105,7 +105,7 @@ public class CusDataFieldService {
             hashMap.put("content_id", noticeMQ.getContentid().toString()); // contentId
             hashMap.put("code", noticeMQ.getF()); //F词
             hashMap.put("heici",noticeMQ.getHeici());//黑词
-            hashMap.put("monitorUrl", "http://monitor.ka.qianlima.com/#/checkDetails?pushId=" + noticeMQ.getContentid());
+            hashMap.put("monitorUrl", "http://cusdata.qianlima.com/#/checkDetails?pushId=" + noticeMQ.getContentid());
             hashMap.put("pocDetailUrl", "http://cusdata.qianlima.com/detail/" + noticeMQ.getContentid() + ".html");
         }
         return hashMap;
@@ -779,7 +779,7 @@ public class CusDataFieldService {
             RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(60000)
                     .setSocketTimeout(60000).setConnectTimeout(60000).build();
             //4、创建HttpGet请求
-            HttpGet httpGet = new HttpGet("http://cusdata.qianlima.com/zt/api/"+infoId);
+            HttpGet httpGet = new HttpGet("http://monitor.ka.qianlima.com/zt/api/"+infoId);
             httpGet.setConfig(requestConfig);
             CloseableHttpResponse response = client.execute(httpGet);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

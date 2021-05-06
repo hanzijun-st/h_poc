@@ -399,7 +399,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(60000)
                     .setSocketTimeout(60000).setConnectTimeout(60000).build();
-            HttpGet get = new HttpGet("http://cusdata.qianlima.com/zt/api/"+contentId);
+            HttpGet get = new HttpGet("http://monitor.ka.qianlima.com/zt/api/"+contentId);
             //url格式编码
             get.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
             //设置超时时间为60秒

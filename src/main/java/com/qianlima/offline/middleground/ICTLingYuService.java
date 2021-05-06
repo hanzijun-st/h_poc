@@ -829,7 +829,7 @@ public class ICTLingYuService {
         CloseableHttpClient httpClient = getHttpClient();
         try {
             //用get方法发送http请求
-            HttpPost post = new HttpPost("http://cusdata.qianlima.com/api/ka/industry");
+            HttpPost post = new HttpPost("http://monitor.ka.qianlima.com/api/ka/industry");
 
             List<NameValuePair> parameters = new ArrayList<NameValuePair>();
             parameters.add(new BasicNameValuePair("unit", str));
@@ -863,8 +863,8 @@ public class ICTLingYuService {
         HttpClient client = new DefaultHttpClient();
         HttpResponse response = null;
         // --KA自用行业
-        // http://cusdata.qianlima.com/api/ka/industry?unit=上海市公安局国际机场分局
-        String url = "http://cusdata.qianlima.com/api/ka/industry?unit="+zhaobiaounit+"";
+        // http://monitor.ka.qianlima.com/api/ka/industry?unit=上海市公安局国际机场分局
+        String url = "http://monitor.ka.qianlima.com/api/ka/industry?unit="+zhaobiaounit+"";
         HttpPost post = new HttpPost(url);
         post.setHeader("Content-Type", "application/json");
 

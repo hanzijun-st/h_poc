@@ -154,7 +154,7 @@ public class QyhyService {
             String title = maps.get("title") != null ? maps.get("title").toString() : "";
             String content = maps.get("content") != null ? maps.get("content").toString() : "";
 
-            String infoTypeUrl = "http://cusdata.qianlima.com/api/infoType";
+            String infoTypeUrl = "http://monitor.ka.qianlima.com/api/infoType";
 
             futureList1.add(executorService1.submit(() -> {
                 getDataType(title,content,contentid,infoTypeUrl);
@@ -266,8 +266,8 @@ public class QyhyService {
         HttpClient client = new DefaultHttpClient();
         HttpResponse response = null;
         // --KA自用行业
-        // http://cusdata.qianlima.com/api/ka/industry?unit=上海市公安局国际机场分局
-        String url = "http://cusdata.qianlima.com/api/ka/industry?unit="+zhaobiaounit+"";
+        // http://monitor.ka.qianlima.com/api/ka/industry?unit=上海市公安局国际机场分局
+        String url = "http://monitor.ka.qianlima.com/api/ka/industry?unit="+zhaobiaounit+"";
         HttpPost post = new HttpPost(url);
         post.setHeader("Content-Type", "application/json");
 
@@ -327,8 +327,8 @@ public class QyhyService {
         HttpClient client = new DefaultHttpClient();
         HttpResponse response = null;
         // --腾讯行业
-        // http://cusdata.qianlima.com/api/tencent/industry?unit=上海市公安局国际机场分局
-        String url = "http://cusdata.qianlima.com/api/tencent/industry?unit="+zhaobiaounit+"";
+        // http://monitor.ka.qianlima.com/api/tencent/industry?unit=上海市公安局国际机场分局
+        String url = "http://monitor.ka.qianlima.com/api/tencent/industry?unit="+zhaobiaounit+"";
         HttpPost post = new HttpPost(url);
         post.setHeader("Content-Type", "application/json");
 
@@ -494,8 +494,8 @@ public class QyhyService {
 
             HttpClient client = new DefaultHttpClient();
             HttpResponse response = null;
-            // http://cusdata.qianlima.com/crm/info/detail?infoId=205206062&userId=4
-            String url = "http://cusdata.qianlima.com/crm/info/detail?infoId="+infoId+"&userId=4";
+            // http://monitor.ka.qianlima.com/crm/info/detail?infoId=205206062&userId=4
+            String url = "http://monitor.ka.qianlima.com/crm/info/detail?infoId="+infoId+"&userId=4";
             HttpGet get = new HttpGet(url);
             get.setHeader("Content-Type", "application/json");
             response = client.execute(get);

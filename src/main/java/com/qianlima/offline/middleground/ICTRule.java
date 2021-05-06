@@ -60,7 +60,7 @@ public class ICTRule {
                 .setSocketTimeout(60000).setConnectTimeout(60000).build();
         UrlEncodedFormEntity entity = null;
         try {
-            HttpPost post = new HttpPost("http://cusdata.qianlima.com/api/ict");
+            HttpPost post = new HttpPost("http://monitor.ka.qianlima.com/api/ict");
             List<NameValuePair> list = new ArrayList<NameValuePair>();
             list.add(new BasicNameValuePair("title", title));
             list.add(new BasicNameValuePair("content", content));
